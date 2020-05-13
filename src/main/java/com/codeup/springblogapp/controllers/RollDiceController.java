@@ -2,10 +2,7 @@ package com.codeup.springblogapp.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Random;
 
@@ -13,28 +10,27 @@ import java.util.Random;
 public class RollDiceController {
 
     @GetMapping("/roll-dice")
-    public String showRollDice() {
+    public String startGame() {
         return "rollDice";
     }
 
-
-    @GetMapping("/roll-dice/{num}")
-    @ResponseBody
-    public String test (@PathVariable int num, Model model) {
+    @PostMapping("/roll-dice/{num}")
+    public String test (@RequestParam(name = "guess") int guess, Model model) {
         Boolean match = false;
         Random r = new Random();
         int diceRoll = 0;
+        model.addAttribute("dice-roll", diceRoll);
+        model.addAttribute("guess", guess);
+
         for (int i = 0; i < 50; i++) {
         diceRoll = r.nextInt(6);
         diceRoll++;
         }
         String response;
-        model.addAttribute("dice-roll", diceRoll);
-        model.addAttribute("num", num);
-        if (num == diceRoll) {
-            response = "You rolled the matching number of " + num;
+        if (guess == diceRoll) {
+            response = "You rolled the matching number of " + guess;
         }
 
-        return "roll-dice";
+        return "diceResults";
     }
 }

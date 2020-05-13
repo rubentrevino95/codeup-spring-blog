@@ -2,12 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:divth="http://www.w3.org/1999/xlink">
 <head>
     <title>Welcome</title>
-    <div th:replace="partials/partials :: head"/>
 </head>
-
 <body>
-    <h1>Welcome to my site.</h1>
-<nav th:replace="partials/partials :: footer" />
+<nav th:include="fragments/navbar :: navbar"></nav>
+
     <h1>Welcome To My Site!</h1>
-<div th:replace="partials/partials :: footer"></div>
+<div th:replace="fragments/footer :: footer"></div>
 </body>

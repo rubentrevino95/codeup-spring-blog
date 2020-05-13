@@ -5,6 +5,7 @@
     <title>Roll a Dice</title>
 </head>
 <body>
+<nav th:include="fragments/navbar :: navbar"></nav>
 <div th:fragment="/roll-dice">
     <form action="/roll-dice/" method="post">
         <input type="radio" id="dice1" name="dice" value="1">
