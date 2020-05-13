@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Roll a Dice</title>
+</head>
+<body>
+<div th:fragment="/roll-dice">
+    <form action="/roll-dice/" method="post">
+        <input type="radio" id="dice1" name="dice" value="1">
+        <label for="dice1">1</label>
+        <input type="radio" id="dice2" name="dice" value="2">
+        <label for="dice2">2</label>
+        <input type="radio" id="dice3" name="dice" value="3">
+        <label for="dice3">3</label>
+        <input type="radio" id="dice4" name="dice" value="4">
+        <label for="dice4">4</label>
+        <input type="radio" id="dice5" name="dice" value="5">
+        <label for="dice5">5</label>
+        <input type="radio" id="dice6" name="dice" value="6">
+        <label for="dice6">6</label>
+        <button>Roll</button>
+    </form>
+</div>
+</body>
+</html>

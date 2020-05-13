@@ -9,6 +9,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class PostController {
 
+    @GetMapping("/index")
+    public String index() {
+        return "index";
+    }
+    @GetMapping("/show")
+    public String show() {
+        return "show";
+    }
+
     @GetMapping("posts")
     @ResponseBody
     public String posts() {
