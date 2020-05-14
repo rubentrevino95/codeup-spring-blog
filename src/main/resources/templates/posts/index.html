@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8" />
-    <title>Index</title>
-</head>
+<head th:replace="fragments/head :: head"/>
+
 <body>
 <nav th:include="fragments/navbar :: navbar"></nav>
 <h1>This is the Index page</h1>
+<ul>
+    <div th:each="post : ${posts}">
+        <li><a th:href="@{'/posts/' + ${post.id}}" th:text="${post.title}"></a></li>
+        <p th:text="${post.getDescription()}"></p>
+    </div>
+</ul>
 
 <div th:include="fragments/footer :: footer"></div>
 </body>

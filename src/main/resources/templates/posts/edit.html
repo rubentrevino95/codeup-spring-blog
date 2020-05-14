@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<div th:replace="fragments/head :: head"/>
+    <title>Edit Post</title>
+    <div th:replace="fragments/head :: head"/>
 </head>
 <body>
 <nav th:include="fragments/navbar :: navbar"/>
-<h1>Create post</h1>
-<form th:action="@{/post/create}">
+<h1>Edit post</h1>
+<form th:action="@{'/posts/' + ${post.id} + '/edit'}">
     <div class="form-group">
         <label for="exampleFormControlTextarea1">Example textarea</label>
         <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
