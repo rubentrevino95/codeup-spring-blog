@@ -3,15 +3,41 @@ package com.codeup.springblogapp.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Posts")
+@Table(name = "posts")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "INT(11) UNSIGNED")
     private Long id;
-    @Column(nullable = false)
+
+    @Column(nullable = false, length = 100)
     private String title;
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+//  Constructor //
+    public Post(String title, String description, User user, long id) {
+        this.title = title;
+        this.description = description;
+        this.user = user;
+        this.id = id;
+    }
+
+    public Post() {
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Long getId() {
         return id;
@@ -37,6 +63,4 @@ public class Post {
         this.description = description;
     }
 
-    public Post() {
-    }
 }

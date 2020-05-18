@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<div th:replace="fragments/head :: head"/>
+    <div th:replace="/fragments/head :: head"/>
 </head>
 <body>
-<nav th:include="fragments/navbar :: navbar"/>
-<h1>Create post</h1>
-<form th:action="@{/post/create}">
-    <div class="form-group">
-        <label for="exampleFormControlTextarea1">Example textarea</label>
-        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+    <nav th:include="/fragments/navbar :: navbar"/>
+
+    <div class="container mt-4">
+        <h1>Create post</h1>
+        <form th:action="@{/posts/create}" th:method="post" th:object="${newPost}">
+            <input type="hidden" th:field="*{id}"/>
+            <input type="hidden" th:field="*{user}"/>
+            Title:
+            <input th:field="*{title}" />
+            <br />
+            Description:
+            <input th:field="*{description}" />
+            <br />
+            <input type="submit" />
+        </form>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-
-</form>
-
-<div th:include="fragments/footer :: footer"></div>
+    <div th:include="/fragments/footer :: footer"></div>
 </body>
 </html>

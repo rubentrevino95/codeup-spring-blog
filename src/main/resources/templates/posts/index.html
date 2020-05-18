@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/head :: head"/>
-
 <body>
-<nav th:include="fragments/navbar :: navbar"></nav>
-<h1>This is the Index page</h1>
-<ul>
+<nav th:replace="fragments/navbar :: navbar"></nav>
+<button class="btn btn-primary" type="button"><a href="/posts/create">Create a post</a></button>
+<div class="container mt-4">
     <div th:each="post : ${posts}">
-        <li><a th:href="@{'/posts/' + ${post.id}}" th:text="${post.title}"></a></li>
-        <p th:text="${post.getDescription()}"></p>
-    </div>
-</ul>
+        <a th:href="@{/posts/${post.id}}"><h1 th:text="${post.title}"></h1></a>
+        <p th:text="${post.description}"></p>
+        <a th:href="'mailto:'+${post.user.email}"><span th:text="${post.user.email}"></span> </a>
 
-<div th:include="fragments/footer :: footer"></div>
+        <div class="text-right mb-1">
+            <button><a th:href="@{/posts/${post.id}/edit}" style="color: black">Edit Post</a></button>
+        </div>
+        <form th:action="@{/posts/${post.id}/delete}" th:method="POST" class="text-right">
+            <button>Delete Post</button>
+        </form>
+        <hr>
+    </div>
+
+</div>
+<div th:include="/fragments/footer :: footer"></div>
 </body>
 </html>

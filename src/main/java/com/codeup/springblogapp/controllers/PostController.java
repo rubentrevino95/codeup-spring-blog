@@ -1,98 +1,100 @@
 package com.codeup.springblogapp.controllers;
 
 import com.codeup.springblogapp.model.Post;
+import com.codeup.springblogapp.model.User;
 import com.codeup.springblogapp.repositories.PostRepository;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.codeup.springblogapp.repositories.UserRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 // GET = displaying info
 // POST = submitting info
-
+// Keys are referred in html tags
 @Controller
 public class PostController {
 
-    private PostRepository postRepo;
+    private PostRepository postDao;
+    private UserRepository userDao;
 
-
-//  CONSTRUCTOR //
-    public PostController(PostRepository postRepo) {
-
-        this.postRepo = postRepo;
+    public PostController(UserRepository userDao, PostRepository postDao) {
+        this.userDao = userDao;
+        this.postDao = postDao;
     }
 
-    @GetMapping("/index")
-    public String index() {
-        return "index";
-    }
 
-    @GetMapping("/show")
-    public String show() {
-        return "show";
-    }
-
-//    @GetMapping("/posts")
-//    @ResponseBody
-//    public String getPosts() {
-//        String posts = "<ul>";
-//        for (Post post : this.postRepo.findAll()) {
-//            posts += "<li>"+post.getTitle() + " by " + post.getTitle() + "</li>";
-//        }
-//        posts += "</ul>";
-//        return posts;
-//    }
-
-//  ALL POSTS   //
+//  VIEW POSTS   //
     @GetMapping("/posts")
-    public String showPostsIndexPage(Model model) {
-        List<Post> postList = postRepo.findAll();
-        model.addAttribute("posts", postList);
+    public String index(Model model) {
+        model.addAttribute("posts", postDao.findAll());
         return "posts/index";
     }
 
-//  SINGLE POST PAGE    //
+    @GetMapping("/show")
+    public String showPost(@PathVariable long id, Model model) {
+        model.addAttribute("post", postDao.getOne(1L));
+        return "posts/show";
+    }
+
     @GetMapping("posts/{id}")
     public String individualPost(Model model, @PathVariable long id) {
-        Post aPost = postRepo.getOne(id);
+        Post aPost = postDao.getOne(id);
+
         model.addAttribute("title","View a Single Post");
         model.addAttribute("post", aPost);
         return "posts/show";
     }
 
-
-//  VIEW CREATE POST PAGE   //
+//  CREATE  //
     @GetMapping("/posts/create")
-    public String viewCreatePost() {
+    public String showCreateForm(Model model) {
+        Post newPost = new Post();
+        model.addAttribute("newPost", newPost);
         return "posts/create";
     }
 
-//  SUBMIT CREATE POSTS PAGE   //
     @PostMapping("/posts/create")
-    public String submitCreatePost(@RequestParam(name = "title") String title, @RequestParam(name = "description") String description) {
-        Post post = new Post();
-        post.setTitle(title);
-        post.setDescription(description);
-        this.postRepo.save(post);
-        return "redirect:/posts";
-    }
+    public String submitCreatePost(@RequestParam String title, @RequestParam String description) {
+        User user = userDao.getOne(1L);
+        Post newPost = new Post();
+        newPost.setTitle(title);
+        newPost.setDescription(description);
+        newPost.setUser(user);
+        postDao.save(newPost);
 
+        return "redirect:/posts";
+}
+
+//  EDIT    //
     @GetMapping("/posts/{id}/edit")
     public String getEditPostForm(@PathVariable long id, Model model) {
-        Post aPost = postRepo.getOne(id);
+        Post aPost = postDao.getOne(id);
         model.addAttribute("post", aPost);
         return "posts/edit";
     }
 
     @PostMapping("/posts/{id}/edit")
-    public String savePostEdit(@PathVariable long id, @RequestParam String title, @RequestParam String description, Model model) {
-        Post editPost = postRepo.getOne(id);
+    public String savePostEdit(@PathVariable long id, @RequestParam String title, @RequestParam String description) {
+        Post editPost = postDao.getOne(id);
+        User user = editPost.getUser();
         editPost.setTitle(title);
         editPost.setDescription(description);
-        postRepo.save(editPost);
-        model.addAttribute("post", editPost);
+        editPost.setUser(user);
+        postDao.save(editPost);
+        return "redirect:/posts/";
+    }
+
+//  DELETE  //
+    @GetMapping("/posts/{id}/delete")
+    public String getDeletePostForm(@PathVariable long id, Model model) {
+        Post aPost = postDao.getOne(id);
+        model.addAttribute("post", aPost);
+        return "posts/delete";
+        }
+
+    @PostMapping("/posts/{id}/delete")
+    public String deletePost(@PathVariable long id) {
+        Post aPost = postDao.getOne(id);
         return "redirect:/posts/" + id;
     }
 

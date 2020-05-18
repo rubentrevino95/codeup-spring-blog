@@ -2,10 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Edit Post</title>
-    <div th:replace="fragments/head :: head"/>
+    <div th:replace="/fragments/head :: head"/>
 </head>
 <body>
-<nav th:include="fragments/navbar :: navbar"/>
+<nav th:include="/fragments/navbar :: navbar"/>
 <h1>Edit post</h1>
 <form th:action="@{'/posts/' + ${post.id} + '/edit'}">
     <div class="form-group">
@@ -16,6 +16,6 @@
 
 </form>
 
-<div th:include="fragments/footer :: footer"></div>
+<div th:include="/fragments/footer :: footer"></div>
 </body>
 </html>
