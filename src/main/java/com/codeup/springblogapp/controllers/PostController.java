@@ -4,6 +4,7 @@ import com.codeup.springblogapp.model.Post;
 import com.codeup.springblogapp.model.User;
 import com.codeup.springblogapp.repositories.PostRepository;
 import com.codeup.springblogapp.repositories.UserRepository;
+import com.codeup.springblogapp.services.EmailService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ public class PostController {
 
     private PostRepository postDao;
     private UserRepository userDao;
+    private EmailService emailService;
 
     public PostController(UserRepository userDao, PostRepository postDao) {
         this.userDao = userDao;
@@ -61,7 +63,7 @@ public class PostController {
         newPost.setDescription(description);
         newPost.setUser(user);
         postDao.save(newPost);
-
+        emailService.prepareAndSend(newPost,"You have created a new post.","Your post \""+newPost.getTitle());
         return "redirect:/posts";
 }
 
@@ -96,6 +98,13 @@ public class PostController {
     public String deletePost(@PathVariable long id) {
         Post aPost = postDao.getOne(id);
         return "redirect:/posts/" + id;
+    }
+//  SEARCH  //
+    @GetMapping("/posts/search")
+    public String searchPost(Model model) {
+        Post post = postDao.findByTitle("tangible");
+        model.addAttribute("post", post);
+        return "posts/search";
     }
 
 }
