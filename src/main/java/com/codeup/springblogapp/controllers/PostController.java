@@ -5,6 +5,7 @@ import com.codeup.springblogapp.model.User;
 import com.codeup.springblogapp.repositories.PostRepository;
 import com.codeup.springblogapp.repositories.UserRepository;
 import com.codeup.springblogapp.services.EmailService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -49,41 +50,48 @@ public class PostController {
 
 //  CREATE  //
     @GetMapping("/posts/create")
-    public String showCreateForm(Model model) {
-        Post newPost = new Post();
-        model.addAttribute("newPost", newPost);
-        return "posts/create";
+    public String showCreateForm() {
+        User loggedInUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (loggedInUser != null) {
+            return "posts/create";
+        } else {
+            return "redirect:/login";
+        }
     }
 
     @PostMapping("/posts/create")
     public String submitCreatePost(@RequestParam String title, @RequestParam String description) {
-        User user = userDao.getOne(1L);
-        Post newPost = new Post();
-        newPost.setTitle(title);
-        newPost.setDescription(description);
-        newPost.setUser(user);
-        postDao.save(newPost);
-        emailService.prepareAndSend(newPost,"You have created a new post.","Your post \""+newPost.getTitle());
+        Post createdPost = new Post();
+        createdPost.setTitle(title);
+        createdPost.setDescription(description);
+        //below is new with authentication exercise
+        User loggedInUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        createdPost.setUser(loggedInUser);
+        //createdPost.setUser(userDao.getOne(1l)); //this was before creating dynamic user
+        postDao.save(createdPost);
         return "redirect:/posts";
 }
 
 //  EDIT    //
     @GetMapping("/posts/{id}/edit")
     public String getEditPostForm(@PathVariable long id, Model model) {
-        Post aPost = postDao.getOne(id);
-        model.addAttribute("post", aPost);
-        return "posts/edit";
+        User loggedInUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (loggedInUser.getId() == postDao.getOne(id).getUser().getId()) {
+            Post postToEdit = postDao.getOne(id);
+            model.addAttribute("post", postToEdit);
+            return "posts/edit";
+        } else {
+            return "redirect:/posts";
+        }
     }
 
     @PostMapping("/posts/{id}/edit")
     public String savePostEdit(@PathVariable long id, @RequestParam String title, @RequestParam String description) {
-        Post editPost = postDao.getOne(id);
-        User user = editPost.getUser();
-        editPost.setTitle(title);
-        editPost.setDescription(description);
-        editPost.setUser(user);
-        postDao.save(editPost);
-        return "redirect:/posts/";
+        User loggedInUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (loggedInUser.getId() == postDao.getOne(id).getUser().getId()) {
+            postDao.deleteById(id);
+        } //can add an else notification if have time
+        return "redirect:/posts";
     }
 
 //  DELETE  //
@@ -96,8 +104,11 @@ public class PostController {
 
     @PostMapping("/posts/{id}/delete")
     public String deletePost(@PathVariable long id) {
-        Post aPost = postDao.getOne(id);
-        return "redirect:/posts/" + id;
+        User loggedInUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (loggedInUser.getId() == postDao.getOne(id).getUser().getId()) {
+            postDao.deleteById(id);
+        } //can add an else notification if have time
+        return "redirect:/posts";
     }
 //  SEARCH  //
     @GetMapping("/posts/search")

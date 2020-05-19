@@ -40,6 +40,14 @@ public class User {
         password = copy.password;
     }
 
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
     public long getId() {
         return id;
     }
